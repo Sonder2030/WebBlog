@@ -1,0 +1,110 @@
+---
+import '../styles/global.css';
+import { site } from '../site';
+import { href } from '../utils/paths';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const navItems = [
+  { label: '首页', path: '/' },
+  { label: '文章', path: '/blog' },
+  { label: '文件', path: '/files' },
+  { label: '关于', path: '/about' },
+];
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (path: string) => {
+  const target = href(path).replace(/\/$/, '') || '/';
+  return path === '/' ? pathname === target : pathname.startsWith(target);
+};
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f5f3ed" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <link rel="icon" type="image/svg+xml" href={href('/favicon.svg')} />
+    <link rel="canonical" href={canonical} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳至正文</a>
+    <header class="site-header">
+      <div class="shell nav-wrap">
+        <a class="brand" href={href('/')} aria-label={`${site.name}首页`}>
+          <span class="brand-mark" aria-hidden="true">拾</span>
+          <span class="brand-type"><strong>{site.name}</strong><small>SHIGUANG NOTES</small></span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航菜单">
+          <span></span><span></span>
+        </button>
+        <nav id="site-nav" class="site-nav" aria-label="主导航">
+          {navItems.map((item) => (
+            <a href={href(item.path)} class:list={[{ active: isActive(item.path) }]} aria-current={isActive(item.path) ? 'page' : undefined}>{item.label}</a>
+          ))}
+        </nav>
+        <a class="header-action" href={href('/files')}>文件下载 <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+
+    <main id="main-content"><slot /></main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div>
+          <a class="brand footer-brand" href={href('/')}>
+            <span class="brand-mark" aria-hidden="true">拾</span>
+            <span class="brand-type"><strong>{site.name}</strong><small>SHIGUANG NOTES</small></span>
+          </a>
+          <p class="footer-note">在互联网的一隅，保留认真生活的证据。</p>
+        </div>
+        <div class="footer-links">
+          <div>
+            <p class="footer-label">继续探索</p>
+            <a href={href('/blog')}>全部文章</a>
+            <a href={href('/files')}>公开文件</a>
+            <a href={href('/about')}>关于本站</a>
+          </div>
+          <div>
+            <p class="footer-label">保持联系</p>
+            <a href={`mailto:${site.email}`}>电子邮件</a>
+            <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div class="shell footer-bottom">
+        <span>© {new Date().getFullYear()} {site.name}</span>
+        <span>用文字与时间，慢慢搭建。</span>
+      </div>
+    </footer>
+
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+      const nav = document.querySelector<HTMLElement>('.site-nav');
+      const closeNav = () => {
+        toggle?.setAttribute('aria-expanded', 'false');
+        toggle?.setAttribute('aria-label', '打开导航菜单');
+        nav?.classList.remove('is-open');
+      };
+      toggle?.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') !== 'true';
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? '关闭导航菜单' : '打开导航菜单');
+        nav?.classList.toggle('is-open', open);
+      });
+      nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeNav));
+    </script>
+  </body>
+</html>

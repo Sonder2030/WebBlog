@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { formatDate } from '../utils/date';
+import { href } from '../utils/paths';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<SiteLayout title="文章 · 拾光" description="技术学习、生活观察与长期思考。">
+  <header class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">Notes & essays</p>
+      <h1>写下一些，<br />值得留下的事。</h1>
+      <p>这里收录近期的学习笔记、经验总结和生活片段。不追逐热点，只记录那些经过时间后依然有用的东西。</p>
+    </div>
+  </header>
+
+  <section class="post-list shell" aria-label="文章列表">
+    {posts.map((post) => (
+      <a class="post-row" href={href(`/blog/${post.id}`)}>
+        <time class="post-date" datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+        <div>
+          <h2>{post.data.title}</h2>
+          <p>{post.data.description}</p>
+          <div class="tags">{post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}</div>
+        </div>
+        <span class="row-arrow" aria-hidden="true">↗</span>
+      </a>
+    ))}
+  </section>
+</SiteLayout>

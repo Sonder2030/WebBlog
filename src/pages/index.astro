@@ -1,0 +1,91 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { publicFiles } from '../data/files';
+import { site } from '../site';
+import { formatDate } from '../utils/date';
+import { href } from '../utils/paths';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<SiteLayout>
+  <section class="hero shell">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow"><span class="status-dot"></span> A quiet corner of the internet</p>
+        <h1>把日常的微光，<br /><em>写成长期的回响。</em></h1>
+        <p class="hero-intro">你好，欢迎来到{site.name}。这里记录技术学习、生活观察与偶尔闪现的思考，也收藏一些愿意与你分享的公开文件。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href={href('/blog')}>开始阅读 <span aria-hidden="true">→</span></a>
+          <a class="button button-secondary" href={href('/about')}>认识一下 <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="hero-footnote">写作 / 技术 / 生活 · 不定期更新，长期保持好奇</p>
+      </div>
+      <div class="hero-art" aria-label="今日便签：不必时时更新，只需真诚记录。">
+        <div class="orbit" aria-hidden="true"><span class="orbit-dot"></span></div>
+        <div class="note-card">
+          <span class="note-number">NOTE — 001</span>
+          <blockquote>不必时时更新，<br />只需真诚记录。</blockquote>
+          <p>拾光手记 · 写于此刻</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tinted">
+    <div class="shell">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Latest stories</p>
+          <h2>最近写下</h2>
+        </div>
+        <a class="text-link" href={href('/blog')}>查看全部文章 <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="post-grid">
+        {posts.map((post, index) => (
+          <a class="post-card" href={href(`/blog/${post.id}`)}>
+            <div class="post-card-top">
+              <span class="post-index">{String(index + 1).padStart(2, '0')}</span>
+              <time class="post-date" datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+            </div>
+            <h3>{post.data.title}</h3>
+            <p>{post.data.description}</p>
+            <div class="tags">{post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section shell">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Open shelf</p>
+        <h2>公开文件架</h2>
+      </div>
+      <p>一些模板与清单，自由下载，按需使用。</p>
+    </div>
+    <div class="file-preview-grid">
+      {publicFiles.slice(0, 2).map((file) => (
+        <a class="file-card" href={href(`/downloads/${file.filename}`)} download>
+          <span class="file-icon">{file.format}</span>
+          <span class="file-info"><strong>{file.title}</strong><small>{file.format} · {file.size} · 更新于 {file.updated}</small></span>
+          <span class="download-mark" aria-hidden="true">↓</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section section-tinted">
+    <div class="shell about-strip">
+      <h2>这个地方不大，<br />但足够<span>真诚。</span></h2>
+      <div class="about-copy">
+        <p>我相信，个人网站不是一张完美的名片，而是一间持续生长的工作室。那些来不及说出口的观察、解决问题后的经验，以及值得反复翻阅的东西，都可以在这里找到位置。</p>
+        <a class="text-link" href={href('/about')}>更多关于这个网站 <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>

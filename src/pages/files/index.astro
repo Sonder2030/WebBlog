@@ -1,0 +1,32 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { publicFiles } from '../../data/files';
+import { href } from '../../utils/paths';
+---
+
+<SiteLayout title="公开文件 · 拾光" description="可以自由下载和使用的公开模板、清单与资料。">
+  <header class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">Open shelf</p>
+      <h1>公开文件架</h1>
+      <p>把有用的模板、清单和小工具放在这里。所有文件均可直接下载，无需注册或登录。</p>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div class="notice"><strong>使用说明</strong><span>这些文件为网站示例内容，你可以自由下载。后续替换为个人文件时，请确认拥有分享权限，并避免上传隐私或敏感信息。</span></div>
+    <section class="files-grid" aria-label="公开文件列表">
+      {publicFiles.map((file) => (
+        <a class="file-card" href={href(`/downloads/${file.filename}`)} download>
+          <span class="file-icon">{file.format}</span>
+          <span class="file-info">
+            <strong>{file.title}</strong>
+            <span class="file-description">{file.description}</span>
+            <small>{file.format} · {file.size} · 更新于 {file.updated}</small>
+          </span>
+          <span class="download-mark" aria-hidden="true">↓</span>
+        </a>
+      ))}
+    </section>
+  </div>
+</SiteLayout>
