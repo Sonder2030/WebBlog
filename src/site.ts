@@ -1,8 +1,8 @@
 export const site = {
-  name: '拾光',
-  title: '拾光 · 个人博客',
-  description: '记录思考、收藏生活，也分享一些值得留下的文件。',
+  name: 'Sonder2030',
+  title: 'Sonder2030 · 个人博客',
+  description: '一个致力于成为一名优秀的端侧AI方向嵌入式工程师的本科生的个人网站。',
   author: '网站主人',
-  email: 'hello@example.com',
-  github: 'https://github.com/',
+  email: 'WilliamGe233@outlook.com',
+  github: 'https://github.com/Sonder2030',
 };
